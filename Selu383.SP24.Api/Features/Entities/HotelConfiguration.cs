@@ -13,5 +13,11 @@ public class HotelConfiguration : IEntityTypeConfiguration<Hotel>
 
         builder.Property(x => x.Address)
             .IsRequired();
+
+        builder.Property(x => x.ManagerId)
+            .WithMany()
+            .HasForeignKey(x => x.ManagerId) 
+            .OnDelete(DeleteBehavior.Restrict); 
+        }
     }
 }

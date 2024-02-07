@@ -16,6 +16,11 @@ public class DataContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        builder.ApplyConfiguration(new HotelConfiguration());
+        builder.ApplyConfiguration(new CustomUserConfiguration());
+        builder.ApplyConfiguration(new UserRoleConfiguration());
+        builder.ApplyConfiguration(new CustomRoleConfiguration());
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
     }
 }
