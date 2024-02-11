@@ -2,8 +2,6 @@
 
 namespace Selu383.SP24.Api.Features.Hotels;
 
-public class Hotel
-{
     public class Hotel
     {
         public int Id { get; set; }
@@ -12,4 +10,3 @@ public class Hotel
         public int? ManagerId { get; set; }
     }
 
-}
