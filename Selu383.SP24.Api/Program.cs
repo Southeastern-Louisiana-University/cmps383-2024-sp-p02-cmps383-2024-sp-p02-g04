@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP24.Api.Data;
 using Selu383.SP24.Api.Features.Hotels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
