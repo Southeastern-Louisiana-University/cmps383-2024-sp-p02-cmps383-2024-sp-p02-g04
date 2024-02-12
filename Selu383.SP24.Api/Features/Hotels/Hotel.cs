@@ -1,10 +1,12 @@
-﻿namespace Selu383.SP24.Api.Features.Hotels;
+﻿using Selu383.SP24.Api.Features.Users;
 
-public class Hotel
-{
-    public int Id { get; set; }
+namespace Selu383.SP24.Api.Features.Hotels;
 
-    public string Name { get; set; }
+    public class Hotel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public int? ManagerId { get; set; }
+    }
 
-    public string Address { get; set; }
-}
