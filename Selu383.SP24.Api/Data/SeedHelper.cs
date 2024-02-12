@@ -1,8 +1,9 @@
-﻿space Selu383.SP24.Api.Data
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Selu383.SP24.Api.Features.Hotels;
+
+namespace Selu383.SP24.Api.Data
 {
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Selu383.SP24.Api.Features.Hotels;
         public class SeedHelper
 
 {
