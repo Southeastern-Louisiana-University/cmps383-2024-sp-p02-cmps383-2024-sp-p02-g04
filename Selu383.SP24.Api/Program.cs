@@ -1,11 +1,34 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Selu383.SP24.Api.Data;
 using Selu383.SP24.Api.Features.Hotels;
+using Selu383.SP24.Api.Features.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
+builder.Services.AddDbContext<DataContext>(options =>
+options.UseSqlServer(builder.Configuration
+.GetConnectionString("DataContext")));
+
+builder.Services.AddIdentity<User, Role>(options =>
+{
+    options.Password.RequireNonAlphanumeric = false;
+}).AddEntityFrameworkStores<DataContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -16,41 +39,46 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    await db.Database.MigrateAsync();
+    await SeedHelper.MigrateAndSeed(scope.ServiceProvider);
 
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+    var bob = await userManager.FindByNameAsync("bob");
+    var bobId = bob.Id;
     var hotels = db.Set<Hotel>();
 
-    if (!await hotels.AnyAsync())
+    //    if (!await hotels.AnyAsync())
+    //    {
+    //        for (int i = 0; i < 6; i++)
+    //        {
+    //            db.Set<Hotel>()
+    //                .Add(new Hotel
+    //                {
+    //                    Name = "Hammond " + i,
+    //                    Address = "1234 Place st"
+    //                });
+    //        }
+
+    //        await db.SaveChangesAsync();
+    //    }
+    //}
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
     {
-        for (int i = 0; i < 6; i++)
-        {
-            db.Set<Hotel>()
-                .Add(new Hotel
-                {
-                    Name = "Hammond " + i,
-                    Address = "1234 Place st"
-                });
-        }
-
-        await db.SaveChangesAsync();
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
 }
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
 
 //see: https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0
 // Hi 383 - this is added so we can test our web project automatically
