@@ -8,7 +8,7 @@ namespace Selu383.SP24.Api.Features.Users
 
         public string UserName { get; set; } = string.Empty;
 
-        public string[] Role { get; set; } = Array.Empty<string>();
+        public string[] Roles { get; set; } = Array.Empty<string>();
     }
 
     public class CreateUserDto
