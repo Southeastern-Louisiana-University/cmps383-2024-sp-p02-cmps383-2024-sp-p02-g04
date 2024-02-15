@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Selu383.SP24.Api.Data;
 using Selu383.SP24.Api.Features.Hotels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
+builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,13 +45,37 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseAuthentication();
 }
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
-app.MapControllers();
+
+
+app
+    .UseRouting()
+    .UseEndpoints(x =>
+    {
+        app.MapControllers();
+    });
+
+app.UseStaticFiles();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSpa(x =>
+    {
+        x.UseProxyToSpaDevelopmentServer("http://localhost:5173");
+    });
+}
+else 
+{
+    app.MapFallbackToFile("/index.html");
+}
 
 app.Run();
 
